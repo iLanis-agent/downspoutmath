@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Downspout math - calculators</title>
+<style>
+  :root { --accent: #a8485f; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: Georgia, 'Times New Roman', serif; background: #f8f5f1; color: #2c2520; line-height: 1.55; }
+  main { max-width: 1100px; margin: 0 auto; padding: 40px 20px 64px; }
+  h1 { font-size: 2rem; margin: 0 0 8px; color: var(--accent); }
+  .lede { margin: 0 0 14px; max-width: 640px; }
+  .note { background: #fff; border: 1px solid #e4d8cd; border-left: 4px solid var(--accent); border-radius: 6px; padding: 12px 16px; font-size: 0.9rem; margin: 0 0 28px; max-width: 720px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; }
+  section { background: #fff; border: 1px solid #e4d8cd; border-radius: 8px; padding: 20px 22px; }
+  h2 { font-size: 1.15rem; margin: 0 0 6px; }
+  .hint { font-size: 0.9rem; color: #8a7563; margin: 0 0 14px; }
+  label { display: block; font-size: 0.9rem; margin: 10px 0 3px; }
+  input { width: 100%; padding: 8px 10px; font-size: 1rem; border: 1px solid #cdbbab; border-radius: 5px; font-family: inherit; }
+  button { margin-top: 16px; width: 100%; padding: 11px; background: var(--accent); color: #fff; border: 0; border-radius: 6px; font-size: 1rem; cursor: pointer; font-family: inherit; }
+  button:hover { filter: brightness(1.08); }
+  .out { margin-top: 14px; font-size: 1rem; min-height: 1.4em; }
+  .out.err { color: #a32222; }
+  footer { max-width: 1100px; margin: 0 auto; padding: 0 20px 40px; font-size: 0.85rem; color: #b3a496; }
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Downspout math</h1>
+  <p class="lede">The roof names the runoff, the wall names the drop, and the slope names the spread. Exact arithmetic, every borrowed number labeled.</p>
+  <div class="note">Illustrative planning arithmetic only. Every storm, capacity, spacing and section is a labeled default you can change; walk the real site in a real rain and let the manufacturer tables and local codes govern.</div>
+  <div class="grid">
+    <section>
+      <h2>Runoff plan</h2>
+      <p class="hint">The roof names the runoff.</p>
+      <label for="r-a">Roof area draining here (sq m)</label>
+      <input id="r-a" type="number" value="120" min="0" step="0.5">
+      <label for="r-s">Labeled storm (mm/hr)</label>
+      <input id="r-s" type="number" value="50" min="0" step="1">
+      <label for="r-c">Labeled capacity per downspout (L/min)</label>
+      <input id="r-c" type="number" value="90" min="0" step="1">
+      <button id="r-go">Count the downspouts</button>
+      <div class="out" id="r-out"></div>
+    </section>
+    <section>
+      <h2>Drop plan</h2>
+      <p class="hint">The wall names the drop.</p>
+      <label for="d-w">Wall height (cm)</label>
+      <input id="d-w" type="number" value="540" min="0" step="0.5">
+      <label for="d-b">Labeled bracket spacing (cm)</label>
+      <input id="d-b" type="number" value="150" min="0" step="1">
+      <button id="d-go">Count the brackets</button>
+      <div class="out" id="d-out"></div>
+    </section>
+    <section>
+      <h2>Spread plan</h2>
+      <p class="hint">The slope names the spread.</p>
+      <label for="s-d">Target distance from foundation (cm)</label>
+      <input id="s-d" type="number" value="300" min="0" step="0.5">
+      <label for="s-s">Labeled section length (cm)</label>
+      <input id="s-s" type="number" value="120" min="0" step="1">
+      <button id="s-go">Size the extensions</button>
+      <div class="out" id="s-out"></div>
+    </section>
+  </div>
+</main>
+<footer>Built by the app factory. <a href="index.html">About</a> &middot; <a href="https://github.com/iLanis-agent/downspoutmath">Source</a></footer>
+<script src="engine.js"></script>
+<script>
+function num(id){ return parseFloat(document.getElementById(id).value); }
+function show(id, r, render){
+  var el = document.getElementById(id);
+  if (r.error) { el.textContent = r.error; el.classList.add('err'); }
+  else { el.textContent = render(r); el.classList.remove('err'); }
+}
+document.getElementById('r-go').addEventListener('click', function(){
+  var a=[num('r-a'),num('r-s'),num('r-c')];
+  show('r-out', DownspoutMath.runoffPlan.apply(null,a), function(r){ return DownspoutMath.renderRunoff.apply(null,[r].concat(a)); });
+});
+document.getElementById('d-go').addEventListener('click', function(){
+  var a=[num('d-w'),num('d-b')];
+  show('d-out', DownspoutMath.dropPlan.apply(null,a), function(r){ return DownspoutMath.renderDrop.apply(null,[r].concat(a)); });
+});
+document.getElementById('s-go').addEventListener('click', function(){
+  var a=[num('s-d'),num('s-s')];
+  show('s-out', DownspoutMath.spreadPlan.apply(null,a), function(r){ return DownspoutMath.renderSpread.apply(null,[r].concat(a)); });
+});
+</script>
+</body>
+</html>
